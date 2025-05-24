@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <link rel="shortcut icon" href="/favicon.ico" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="description" content="Il sito personale di Andrea Lanterna" />
   <meta name="author" content="Andrea Lanterna" />
   <meta name="robots" content="index, follow">
@@ -171,15 +171,23 @@ function updateCanvasSize() {
   const headerHeight = h1.offsetHeight + p.offsetHeight;
   const footerHeight = footer.offsetHeight;
   const padding = 200;
-
   const available = maxHeight - (headerHeight + footerHeight + padding);
-  if (available < 100) {
-    canvas.style.display = 'none';
-  } else {
-    canvas.style.display = 'block';
+  const display = available >= 100;
+
+  canvas.style.display = display ? 'block' : 'none';
+
+  if (display) {
     const size = Math.min(window.innerWidth * 0.4, available);
-    canvas.width = canvas.height = size;
-    trailCanvas.width = trailCanvas.height = size;
+    const dpr = window.devicePixelRatio || 1;
+
+    canvas.width = canvas.height = size * dpr;
+    canvas.style.width = canvas.style.height = `${size}px`;
+
+    trailCanvas.width = trailCanvas.height = size * dpr;
+    trailCanvas.style.width = trailCanvas.style.height = `${size}px`;
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    trailCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 }
 
