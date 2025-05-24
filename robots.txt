@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://andrealanterna.com/sitemap.xml
