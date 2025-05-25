@@ -167,7 +167,8 @@ const trailCanvas = document.createElement('canvas');
 const trailCtx = trailCanvas.getContext('2d');
 
 function updateCanvasSize() {
-  const maxHeight = window.innerHeight;
+  const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  const maxHeight = viewportHeight;
   const headerHeight = h1.offsetHeight + p.offsetHeight;
   const footerHeight = footer.offsetHeight;
   const padding = 200;
