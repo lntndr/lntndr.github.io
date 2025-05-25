@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <link rel="shortcut icon" href="/favicon.ico" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Il sito personale di Andrea Lanterna" />
   <meta name="author" content="Andrea Lanterna" />
   <meta name="robots" content="index, follow">
@@ -103,8 +103,6 @@
       max-width: 100%;
       height: auto;
       display: block;
-      will-change: transform; /* iOS Safari performance hint */
-      touch-action: none;     /* Prevent unwanted zooming/panning */
     }
     .canvas-wrapper noscript {
       color: white;
@@ -168,41 +166,24 @@ const p = document.querySelector('p');
 const trailCanvas = document.createElement('canvas');
 const trailCtx = trailCanvas.getContext('2d');
 
-// Debounce for resize/orientation events
-let resizeTimeout;
 function updateCanvasSize() {
-  clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(() => {
-    // Use visualViewport for iOS Safari if available
-    const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-    const maxHeight = viewportHeight;
-    const headerHeight = h1.offsetHeight + p.offsetHeight;
-    const footerHeight = footer.offsetHeight;
-    const padding = 200;
-    const available = maxHeight - (headerHeight + footerHeight + padding);
-    const display = available >= 100;
+  const maxHeight = window.innerHeight;
+  const headerHeight = h1.offsetHeight + p.offsetHeight;
+  const footerHeight = footer.offsetHeight;
+  const padding = 200;
 
-    canvas.style.display = display ? 'block' : 'none';
-
-    if (display) {
-      // Clamp max size for iPhone safety
-      const size = Math.min(window.innerWidth * 0.4, available, 400);
-      const dpr = Math.min(window.devicePixelRatio || 1, 3); // Clamp dpr for iOS
-
-      canvas.width = canvas.height = size * dpr;
-      canvas.style.width = canvas.style.height = `${size}px`;
-
-      trailCanvas.width = trailCanvas.height = size * dpr;
-      trailCanvas.style.width = trailCanvas.style.height = `${size}px`;
-
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      trailCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-  }, 100); // 100ms debounce
+  const available = maxHeight - (headerHeight + footerHeight + padding);
+  if (available < 100) {
+    canvas.style.display = 'none';
+  } else {
+    canvas.style.display = 'block';
+    const size = Math.min(window.innerWidth * 0.4, available);
+    canvas.width = canvas.height = size;
+    trailCanvas.width = trailCanvas.height = size;
+  }
 }
 
 window.addEventListener('resize', updateCanvasSize);
-window.addEventListener('orientationchange', updateCanvasSize);
 updateCanvasSize();
 
 const dx = 50;
@@ -216,14 +197,12 @@ let lastFrameTime = 0;
 
 function animate(currentTime) {
   requestAnimationFrame(animate);
-
-  // Use requestAnimationFrame's time argument for smoother animation
-  if (!lastFrameTime) lastFrameTime = currentTime;
+  
   const elapsed = currentTime - lastFrameTime;
   if (elapsed < frameInterval) return;
-
+  
   lastFrameTime = currentTime;
-
+  
   if (canvas.style.display === 'none') return;
   updateCanvasSize();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
