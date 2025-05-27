@@ -10,20 +10,30 @@ export function startCanvasAnimation() {
   const trailCtx = trailCanvas.getContext('2d');
 
   function updateCanvasSize() {
-    const viewportHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const canvasVisibleMinSize = 60;
+
+    const innerHeight = window.innerHeight;
+    const viewportHeight = window.visualViewport?.height || innerHeight;
+    const isZoomed = viewportHeight < innerHeight * 0.95;
+
     const headerHeight = h1.offsetHeight + p.offsetHeight;
     const footerHeight = footer.offsetHeight;
-    const padding = 200;
+    const padding = isZoomed
+      ? 80 // lighter padding if zoomed
+      : Math.max(120, viewportHeight * 0.15); // generous padding normally
 
     const available = viewportHeight - (headerHeight + footerHeight + padding);
-    if (available < 100) {
+    let size = Math.min(window.innerWidth * 0.4, available);
+
+    if (!isZoomed && size < canvasVisibleMinSize) {
       canvas.style.display = 'none';
-    } else {
-      canvas.style.display = 'block';
-      const size = Math.min(window.innerWidth * 0.4, available);
-      canvas.width = canvas.height = size;
-      trailCanvas.width = trailCanvas.height = size;
+      return;
     }
+
+    size = Math.max(canvasVisibleMinSize, size);
+    canvas.style.display = 'block';
+    canvas.width = canvas.height = size;
+    trailCanvas.width = trailCanvas.height = size;
   }
 
   window.addEventListener('resize', updateCanvasSize);
