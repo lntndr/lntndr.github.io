@@ -1,0 +1,234 @@
+/* Variables */
+:root, [data-theme='light'], [data-theme='dark'] {
+    --color-text: rgb(50, 50, 50);
+    --font-family: 'Source Serif', Georgia, serif;
+    --grid-spacing: 2.5rem;
+    --grid-spacing-v: 2.0rem;
+    --grid-content-spacing: 2.6rem;
+    --grid-opacity: 20%;
+    --main-font-size: 1.6rem;
+    --color-background: #fffffc;
+}
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    interpolate-size: allow-keywords;
+  }
+}
+body {
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+input, button, textarea, select {
+  font: inherit;
+}
+p, h1, h2, h3, h4, h5, h6 {
+  overflow-wrap: break-word;
+}
+p {
+  text-wrap: pretty;
+}
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+}
+#root, #__next {
+  isolation: isolate;
+}
+
+/* Fonts */
+@font-face {
+  font-family: 'Source Serif';
+  src: url('fonts/SourceSerif4Variable-Roman.otf.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 1 999;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Source Serif';
+  src: url('fonts/SourceSerif4Variable-Italic.otf.woff2') format('woff2');
+  font-style: italic;
+  font-weight: 1 999;
+  font-display: swap;
+}
+
+/* General styles */
+body {
+  font-family: var(--font-family);
+  font-weight: 400;
+  font-style: normal;
+  font-size: var(--main-font-size);
+  -webkit-text-size-adjust: 100%;
+  color: var(--color-text);
+  background-color: var(--color-background);
+}
+html, body {
+  margin: 0;
+  height: 100%;
+}
+a {
+  color: var(--color-text);
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.1rem;
+  text-underline-offset: 0.2rem;
+  text-decoration-color: var(--color-text);
+  font-weight: 400;
+}
+a:hover {
+  text-decoration-thickness: 0.15rem;
+}
+a:visited {
+  color: var(--color-text);
+}
+p {
+  margin-bottom: var(--main-font-size);
+}
+b, strong {
+  font-weight: 500;
+}
+b a, strong a {
+  font-weight: 500 !important;
+}
+em, i {
+  font-style: italic;
+}
+blockquote {
+  color: var(--color-text);
+  padding-left: 4rem;
+  padding-right: 5rem;
+  margin-bottom: var(--main-font-size);
+  max-width: 100%;
+}
+h2 {
+  font-size: clamp(2.2rem, 4cqw + 0.5rem, 2.8rem);
+  line-height: 1.2;
+  font-weight: 400;
+  margin-bottom: calc(var(--main-font-size) - 0.5rem);
+}
+h2 a {
+  font-weight: 400;
+  text-decoration: none;
+}
+h3 {
+  font-size: clamp(2.0rem, 2cqw + 1rem, 2.3rem);
+  line-height: 1.2;
+  font-weight: 400;
+  margin-bottom: var(--main-font-size);
+}
+h4 {
+  font-size: clamp(1.8rem, 2cqw + 1rem, 2.1rem);
+  line-height: 1.2;
+  font-weight: 400;
+  margin-bottom: var(--main-font-size);
+}
+h5 {
+  font-size: var(--main-font-size);
+  line-height: 1.2;
+  font-weight: 500;
+  margin-bottom: calc(var(--main-font-size) - 1.3rem);
+}
+img {
+  height: auto;
+}
+ol {
+  margin-bottom: var(--main-font-size);
+  padding-left: 0;
+  list-style-position: inside;
+}
+ol li {
+  padding-left: 3rem;
+  padding-right: 4rem;
+  max-width: 100%;
+}
+ol li.footnote {
+  font-size: 1.6rem;
+}
+
+/* Layout */
+.grid-container {
+  display: grid;
+  height: 100vh;
+  max-width: 117rem;
+  grid-template-columns: auto 1fr clamp(18rem, 20.5vw, 20.0rem);
+  grid-template-rows: auto;
+  grid-template-areas:
+    "header main menu";
+  gap: 0;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 0 2.5rem;
+}
+
+header {
+  grid-area: header;
+  width: auto;
+  justify-content: right;
+  padding-right: var(--grid-spacing);
+}
+
+main {
+  grid-area: main;
+  display: block;
+  height: max-content;
+  padding: calc(var(--grid-spacing-v) + 1rem) var(--grid-spacing) var(--grid-spacing-v) var(--grid-spacing);
+}
+
+#menu-container {
+  grid-area: menu;
+  display: block;
+  padding: var(--grid-spacing-v) 0 0 var(--grid-spacing);
+  box-sizing: border-box;
+}
+
+/* nav */
+
+#menu-container nav ul {
+  list-style: none;
+  font-weight: 400;
+  font-style: italic;
+  font-size: clamp(1.6rem, 2.0vw, 2.0rem);
+  line-height: 1.5;
+}
+
+/* Logo */
+.logo-circle {
+  width: clamp(80px, 15vw, 120px);
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+  background-color: #1B98E0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.logo-circle canvas {
+  display: block;
+}
+
+.logotype {
+  writing-mode: sideways-lr;
+  font-variant: small-caps;
+  position: relative;
+  left: calc(61.8% - 0.5em);
+}
+
+/* tweener design */
+
+@media (max-width: 900px) {}
+
+/* mobile styles */
+
+@media (max-width: 625px) {}
