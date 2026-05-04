@@ -5,8 +5,19 @@ export function startCanvasAnimation() {
   const h1 = document.querySelector('h1');
   const p = document.querySelector('p');
 
+  const trailCanvas = document.createElement('canvas');
+  const trailCtx = trailCanvas.getContext('2d');
+
   let cssSize = 0;
   let dpr = 1;
+
+  const colorScheme = window.matchMedia('(prefers-color-scheme: dark)');
+  let circleColor = getComputedStyle(document.documentElement)
+    .getPropertyValue('--circle-bg').trim();
+  colorScheme.addEventListener('change', () => {
+    circleColor = getComputedStyle(document.documentElement)
+      .getPropertyValue('--circle-bg').trim();
+  });
 
   function updateCanvasSize() {
     const canvasVisibleMinSize = 60;
@@ -35,6 +46,7 @@ export function startCanvasAnimation() {
     cssSize = size;
     const bufferSize = Math.round(size * dpr);
     canvas.width = canvas.height = bufferSize;
+    trailCanvas.width = trailCanvas.height = bufferSize;
     canvas.style.width = `${size}px`;
     canvas.style.height = `${size}px`;
   }
@@ -42,6 +54,7 @@ export function startCanvasAnimation() {
   window.addEventListener('resize', updateCanvasSize);
   updateCanvasSize();
 
+  const circleRadius = 65;
   const dx = 50;
   const dy = 50;
   const r = 6;
@@ -63,7 +76,9 @@ export function startCanvasAnimation() {
 
     updateCanvasSize();
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    trailCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, cssSize, cssSize);
+    trailCtx.clearRect(0, 0, cssSize, cssSize);
 
     const now = new Date();
     const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
@@ -72,6 +87,11 @@ export function startCanvasAnimation() {
     const xc = cssSize / 2;
     const yc = cssSize / 2;
 
+    ctx.beginPath();
+    ctx.arc(xc, yc, circleRadius, 0, Math.PI * 2);
+    ctx.fillStyle = circleColor;
+    ctx.fill();
+
     for (let i = 0; i < numDots; i++) {
       const multiplier = dotMultipliers[i];
       for (let t = 0; t < trailSteps; t++) {
@@ -79,16 +99,18 @@ export function startCanvasAnimation() {
         const trailAngle = baseAngle * multiplier - t * 0.015 * 2 * Math.PI;
         const x = Math.cos(trailAngle) * dx + xc;
         const y = Math.sin(trailAngle + sinCosDiff) * dy + yc;
-        ctx.save();
-        ctx.shadowBlur = 6;
-        ctx.shadowColor = `rgba(255, 255, 255, ${fade * 0.6})`;
-        ctx.beginPath();
-        ctx.ellipse(x, y, 2.4, 5, 0, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255, 255, 255, ${fade * 0.5})`;
-        ctx.fill();
-        ctx.restore();
+
+        trailCtx.beginPath();
+        trailCtx.ellipse(x, y, 2.4, 5, 0, 0, Math.PI * 2);
+        trailCtx.fillStyle = `rgba(255, 255, 255, ${fade * 0.8})`;
+        trailCtx.fill();
       }
     }
+
+    ctx.save();
+    ctx.filter = 'blur(2px)';
+    ctx.drawImage(trailCanvas, 0, 0, cssSize, cssSize);
+    ctx.restore();
 
     for (let i = 0; i < numDots; i++) {
       const angle = baseAngle * dotMultipliers[i];
