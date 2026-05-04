@@ -19,9 +19,9 @@ export function startCanvasAnimation() {
       .getPropertyValue('--circle-bg').trim();
   });
 
-  function updateCanvasSize() {
-    const canvasVisibleMinSize = 60;
+  const circleRadius = 100;
 
+  function updateCanvasSize() {
     const innerHeight = window.innerHeight;
     const viewportHeight = window.visualViewport?.height || innerHeight;
     const isZoomed = viewportHeight < innerHeight * 0.95;
@@ -33,14 +33,13 @@ export function startCanvasAnimation() {
       : Math.max(120, viewportHeight * 0.15);
 
     const available = viewportHeight - (headerHeight + footerHeight + padding);
-    let size = Math.min(window.innerWidth * 0.4, available);
+    const size = Math.min(window.innerWidth * 0.4, available);
 
-    if (!isZoomed && size < canvasVisibleMinSize) {
+    if (size < circleRadius * 2) {
       canvas.style.display = 'none';
       return;
     }
 
-    size = Math.max(canvasVisibleMinSize, size);
     canvas.style.display = 'block';
     dpr = window.devicePixelRatio || 1;
     cssSize = size;
@@ -54,7 +53,6 @@ export function startCanvasAnimation() {
   window.addEventListener('resize', updateCanvasSize);
   updateCanvasSize();
 
-  const circleRadius = 100;
   const dx = 50;
   const dy = 50;
   const r = 6;
