@@ -32,7 +32,7 @@ export function startCanvasAnimation() {
       : Math.max(120, viewportHeight * 0.15);
 
     const available = viewportHeight - (headerHeight + footerHeight + padding);
-    const size = Math.min(window.innerWidth * 0.4, available);
+    const size = Math.min(window.innerWidth * 0.65, available);
 
     if (size < circleRadius * 2) {
       canvas.style.display = 'none';
