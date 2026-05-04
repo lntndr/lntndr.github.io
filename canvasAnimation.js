@@ -54,7 +54,7 @@ export function startCanvasAnimation() {
   window.addEventListener('resize', updateCanvasSize);
   updateCanvasSize();
 
-  const circleRadius = 81;
+  const circleRadius = 90;
   const dx = 50;
   const dy = 50;
   const r = 6;
