@@ -54,7 +54,7 @@ export function startCanvasAnimation() {
   window.addEventListener('resize', updateCanvasSize);
   updateCanvasSize();
 
-  const circleRadius = 65;
+  const circleRadius = 81;
   const dx = 50;
   const dy = 50;
   const r = 6;
@@ -108,7 +108,7 @@ export function startCanvasAnimation() {
     }
 
     ctx.save();
-    ctx.filter = 'blur(2px)';
+    ctx.filter = 'blur(4px)';
     ctx.drawImage(trailCanvas, 0, 0, cssSize, cssSize);
     ctx.restore();
 
