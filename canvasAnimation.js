@@ -1,13 +1,12 @@
 export function startCanvasAnimation() {
   const canvas = document.getElementById('ps2Canvas');
   const ctx = canvas.getContext('2d');
-  const wrapper = document.querySelector('.canvas-wrapper');
   const footer = document.querySelector('footer');
   const h1 = document.querySelector('h1');
   const p = document.querySelector('p');
 
-  const trailCanvas = document.createElement('canvas');
-  const trailCtx = trailCanvas.getContext('2d');
+  let cssSize = 0;
+  let dpr = 1;
 
   function updateCanvasSize() {
     const canvasVisibleMinSize = 60;
@@ -19,8 +18,8 @@ export function startCanvasAnimation() {
     const headerHeight = h1.offsetHeight + p.offsetHeight;
     const footerHeight = footer.offsetHeight;
     const padding = isZoomed
-      ? 80 // lighter padding if zoomed
-      : Math.max(120, viewportHeight * 0.15); // generous padding normally
+      ? 80
+      : Math.max(120, viewportHeight * 0.15);
 
     const available = viewportHeight - (headerHeight + footerHeight + padding);
     let size = Math.min(window.innerWidth * 0.4, available);
@@ -32,8 +31,12 @@ export function startCanvasAnimation() {
 
     size = Math.max(canvasVisibleMinSize, size);
     canvas.style.display = 'block';
-    canvas.width = canvas.height = size;
-    trailCanvas.width = trailCanvas.height = size;
+    dpr = window.devicePixelRatio || 1;
+    cssSize = size;
+    const bufferSize = Math.round(size * dpr);
+    canvas.width = canvas.height = bufferSize;
+    canvas.style.width = `${size}px`;
+    canvas.style.height = `${size}px`;
   }
 
   window.addEventListener('resize', updateCanvasSize);
@@ -41,6 +44,7 @@ export function startCanvasAnimation() {
 
   const dx = 50;
   const dy = 50;
+  const r = 6;
   const numDots = 7;
   const dotMultipliers = [1, 2, 3, 4, 5, 6, 7];
   const trailSteps = 4;
@@ -58,16 +62,15 @@ export function startCanvasAnimation() {
     if (canvas.style.display === 'none') return;
 
     updateCanvasSize();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    trailCtx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssSize, cssSize);
 
     const now = new Date();
     const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
     const baseAngle = (seconds / 60) * 2 * Math.PI;
     const sinCosDiff = Math.sin(seconds * 2 * Math.PI / 30) * 4;
-    const xc = canvas.width / 2;
-    const yc = canvas.height / 2;
-    const r = canvas.width * 0.03;
+    const xc = cssSize / 2;
+    const yc = cssSize / 2;
 
     for (let i = 0; i < numDots; i++) {
       const multiplier = dotMultipliers[i];
@@ -76,18 +79,16 @@ export function startCanvasAnimation() {
         const trailAngle = baseAngle * multiplier - t * 0.015 * 2 * Math.PI;
         const x = Math.cos(trailAngle) * dx + xc;
         const y = Math.sin(trailAngle + sinCosDiff) * dy + yc;
-
-        trailCtx.beginPath();
-        trailCtx.ellipse(x, y, 2.4, 5, 0, 0, Math.PI * 2);
-        trailCtx.fillStyle = `rgba(255, 255, 255, ${fade * 0.8})`;
-        trailCtx.fill();
+        ctx.save();
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = `rgba(255, 255, 255, ${fade * 0.6})`;
+        ctx.beginPath();
+        ctx.ellipse(x, y, 2.4, 5, 0, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${fade * 0.5})`;
+        ctx.fill();
+        ctx.restore();
       }
     }
-
-    ctx.save();
-    ctx.filter = 'blur(2px)';
-    ctx.drawImage(trailCanvas, 0, 0);
-    ctx.restore();
 
     for (let i = 0; i < numDots; i++) {
       const angle = baseAngle * dotMultipliers[i];
