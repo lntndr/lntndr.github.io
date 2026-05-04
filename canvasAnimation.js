@@ -1,9 +1,8 @@
 export function startCanvasAnimation() {
   const canvas = document.getElementById('ps2Canvas');
   const ctx = canvas.getContext('2d');
+  const header = document.querySelector('header');
   const footer = document.querySelector('footer');
-  const h1 = document.querySelector('h1');
-  const p = document.querySelector('p');
 
   const trailCanvas = document.createElement('canvas');
   const trailCtx = trailCanvas.getContext('2d');
@@ -26,7 +25,7 @@ export function startCanvasAnimation() {
     const viewportHeight = window.visualViewport?.height || innerHeight;
     const isZoomed = viewportHeight < innerHeight * 0.95;
 
-    const headerHeight = (h1?.offsetHeight ?? 0) + p.offsetHeight;
+    const headerHeight = header?.offsetHeight ?? 0;
     const footerHeight = footer.offsetHeight;
     const padding = isZoomed
       ? 80
