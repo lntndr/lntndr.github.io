@@ -26,7 +26,7 @@ export function startCanvasAnimation() {
     const viewportHeight = window.visualViewport?.height || innerHeight;
     const isZoomed = viewportHeight < innerHeight * 0.95;
 
-    const headerHeight = h1.offsetHeight + p.offsetHeight;
+    const headerHeight = (h1?.offsetHeight ?? 0) + p.offsetHeight;
     const footerHeight = footer.offsetHeight;
     const padding = isZoomed
       ? 80
