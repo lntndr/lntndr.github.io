@@ -32,7 +32,8 @@ export function startCanvasAnimation() {
       : Math.max(120, viewportHeight * 0.15);
 
     const available = viewportHeight - (headerHeight + footerHeight + padding);
-    const size = Math.min(Math.max(window.innerWidth * 0.4, circleRadius * 2 + 20), available);
+    const viewportWidth = window.visualViewport?.width || window.innerWidth;
+    const size = Math.min(Math.max(viewportWidth * 0.4, circleRadius * 2 + 20), available);
 
     if (size < circleRadius * 2) {
       canvas.style.display = 'none';
@@ -50,6 +51,7 @@ export function startCanvasAnimation() {
   }
 
   window.addEventListener('resize', updateCanvasSize);
+  window.visualViewport?.addEventListener('resize', updateCanvasSize);
   updateCanvasSize();
 
   const dx = 50;
@@ -71,7 +73,6 @@ export function startCanvasAnimation() {
 
     if (canvas.style.display === 'none') return;
 
-    updateCanvasSize();
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     trailCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, cssSize, cssSize);
