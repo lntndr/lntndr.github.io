@@ -126,5 +126,5 @@ export function startCanvasAnimation() {
     }
   }
 
-  animate();
+  requestAnimationFrame(animate);
 }
