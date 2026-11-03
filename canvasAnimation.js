@@ -59,7 +59,9 @@ export function startCanvasAnimation() {
   const r = 6;
   const numDots = 7;
   const dotMultipliers = [1, 2, 3, 4, 5, 6, 7];
-  const trailSteps = 4;
+  const trailSamples = 42;
+  const trailAngleStep = 0.006 * 2 * Math.PI;
+  const trailHeadWidth = 2.5;
   const fps = 60;
   const frameInterval = 1000 / fps;
   let lastFrameTime = 0;
@@ -90,18 +92,28 @@ export function startCanvasAnimation() {
     ctx.fillStyle = circleColor;
     ctx.fill();
 
+    trailCtx.lineCap = 'round';
+    trailCtx.lineJoin = 'round';
     for (let i = 0; i < numDots; i++) {
       const multiplier = dotMultipliers[i];
-      for (let t = 0; t < trailSteps; t++) {
-        const fade = 1 - t / trailSteps;
-        const trailAngle = baseAngle * multiplier - t * 0.015 * 2 * Math.PI;
+      let prevX = Math.cos(baseAngle * multiplier) * dx + xc;
+      let prevY = Math.sin(baseAngle * multiplier + sinCosDiff) * dy + yc;
+
+      for (let t = 1; t < trailSamples; t++) {
+        const fade = 1 - t / trailSamples;
+        const trailAngle = baseAngle * multiplier - t * trailAngleStep;
         const x = Math.cos(trailAngle) * dx + xc;
         const y = Math.sin(trailAngle + sinCosDiff) * dy + yc;
 
         trailCtx.beginPath();
-        trailCtx.ellipse(x, y, 2.4, 5, 0, 0, Math.PI * 2);
-        trailCtx.fillStyle = `rgba(255, 255, 255, ${fade * 0.8})`;
-        trailCtx.fill();
+        trailCtx.moveTo(prevX, prevY);
+        trailCtx.lineTo(x, y);
+        trailCtx.lineWidth = trailHeadWidth * fade;
+        trailCtx.strokeStyle = `rgba(255, 255, 255, ${fade * 0.8})`;
+        trailCtx.stroke();
+
+        prevX = x;
+        prevY = y;
       }
     }
 
